@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh_cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日语50音随机测试</title>
+</head>
+<body>
+    <div id="log">
+        <p>历史记录</p>
+    </div>
+    <div id="table" style="display: none;">
+        <p>50音表</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>平</th>
+                    <th>あ段</th>
+                    <th>い段</th>
+                    <th>う段</th>
+                    <th>え段</th>
+                    <th>お段</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>あ行</td>
+                    <td>あ [a]</td>
+                    <td>い [i]</td>
+                    <td>う [u]</td>
+                    <td>え [e]</td>
+                    <td>お [o]</td>
+                </tr>
+                <tr>
+                    <td>か行</td>
+                    <td>か [ka]</td>
+                    <td>き [ki]</td>
+                    <td>く [ku]</td>
+                    <td>け [ke]</td>
+                    <td>こ [ko]</td>
+                </tr>
+                <tr>
+                    <td>さ行</td>
+                    <td>さ [sa]</td>
+                    <td>し [shi]</td>
+                    <td>す [su]</td>
+                    <td>せ [se]</td>
+                    <td>そ [so]</td>
+                </tr>
+                <tr>
+                    <td>た行</td>
+                    <td>た [ta]</td>
+                    <td>ち [chi]</td>
+                    <td>つ [tsu]</td>
+                    <td>て [te]</td>
+                    <td>と [to]</td>
+                </tr>
+                <tr>
+                    <td>な行</td>
+                    <td>な [na]</td>
+                    <td>に [ni]</td>
+                    <td>ぬ [nu]</td>
+                    <td>ね [ne]</td>
+                    <td>の [no]</td>
+                </tr>
+                <tr>
+                    <td>は行</td>
+                    <td>は [ha]</td>
+                    <td>ひ [hi]</td>
+                    <td>ふ [fu]</td>
+                    <td>へ [he]</td>
+                    <td>ほ [ho]</td>
+                </tr>
+                <tr>
+                    <td>ま行</td>
+                    <td>ま [ma]</td>
+                    <td>み [mi]</td>
+                    <td>む [mu]</td>
+                    <td>め [me]</td>
+                    <td>も [mo]</td>
+                </tr>
+                <tr>
+                    <td>や行</td>
+                    <td>や [ya]</td>
+                    <td>い [i]</td>
+                    <td>ゆ [yu]</td>
+                    <td>え [e]</td>
+                    <td>よ [yo]</td>
+                </tr>
+                <tr>
+                    <td>ら行</td>
+                    <td>ら [ra]</td>
+                    <td>り [ri]</td>
+                    <td>る [ru]</td>
+                    <td>れ [re]</td>
+                    <td>ろ [ro]</td>
+                </tr>
+                <tr>
+                    <td>わ行</td>
+                    <td>わ [wa]</td>   
+                    <td>い [i]</td>
+                    <td>う [u]</td>
+                    <td>え [e]</td>
+                    <td>を [wo]</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="question_box">
+        <div id="question_content">
+            <h1 id="question"></h1>
+            <p id="pronunciation"></p>
+        </div>
+        <input id="input_answer" type="text" placeholder="你的答案">
+        <button id="answer_button" onclick="showAnswer()" >显示答案</button>
+    </div>
+    <div id="change">
+        <button id="next" onclick="next()" >下一题</button>
+        <button id="change_button" onclick="change()">切换假名</button>
+        <p><span id="word_status"></span></p>
+        <p><button onclick="showTable()">50音表</button></p>
+    </div>
+    <div id="empty">
+
+    </div>
+
+</body>
+<style>
+    *{
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body{
+        align-content: center;
+        text-align: center;
+        height: 300px;
+    }
+    #pronunciation{
+        display: none;
+    }
+
+    #log{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: fixed;
+        overflow-y: scroll;
+        border: 1px solid black;
+        top: 0;
+        left: 0;
+        width: 20%;
+        height: 400px
+    }
+    #log p{
+        display: inline;
+        height:20px;
+        margin: 10px;
+
+    }
+    .correct_{
+        color: green;
+    }
+    .wrong_{
+        color: red;
+    }
+    #table{
+        /* display: none; */
+        top: 1ch;
+        right: 1ch;
+        position: fixed;
+        border: 1px solid black;
+        width: 250px;
+    }
+    #table table,thead,tbody,tr,th,td{
+        border: 1px solid black;
+    }
+    #question_content{
+        height: 120px;
+    }
+    #input_answer{
+        padding: 0;
+        border: 2 solid black;
+        width: 78px;
+        height: 28px;
+    }
+    #answer_button,#next,#change_button{
+        width: 80px;
+        height: 30px;
+    }
+    #word_status{
+        width: 160px;
+    }
+    #empty{
+        display: none;
+        width: 100%;
+        height: 1000px;     
+    }
+
+</style>
+<script>
+    let question_number = 1;
+    let answer_pronunciation = "none";
+    let randomNumber = " ";
+    let randomWord = " ";
+    let randomPronunciation = " ";
+    let input_answer = " "
+    let resault = " ";
+
+
+
+    // let word = ["ア", "イ", "ウ", "エ", "オ", "カ", "キ", "ク", "ケ", "コ", "サ", "シ", "ス", "セ", "ソ", "タ", "チ", "ツ", "テ", "ト", "ナ", "ニ", "ヌ", "ネ", "ノ", "ハ", "ヒ", "フ", "ヘ", "ホ", "マ", "ミ", "ム", "メ", "モ", "ヤ", "ユ", "ヨ", "ラ", "リ", "ル", "レ", "ロ", "ワ", "ヲ", "ン", "ガ", "ギ", "グ", "ゲ", "ゴ", "ザ", "ジ", "ズ", "ゼ", "ゾ", "ダ", "ヂ", "ヅ", "デ", "ド", "バ", ]
+    let word = ["あ", "い", "う", "え", "お", "か", "き", "く", "け", "こ", "さ", "し", "す", "せ", "そ", "た", "ち", "つ", "て", "と", "な", "に", "ぬ", "ね", "の", "は", "ひ", "ふ", "へ", "ほ", "ま", "み", "む", "め", "も", "や", "ゆ", "よ", "ら", "り", "る", "れ", "ろ", "わ", "を", "ん", "が", "ぎ", "ぐ", "げ", "ご", "ざ", "じ", "ず", "ぜ", "ぞ", "だ", "ぢ", "づ", "で", "ど", "ば", ];
+    let word_status = "平假名";
+
+    function randomQuestion(){
+        var pronunciation = ["a", "i", "u", "e", "o", "ka", "ki", "ku", "ke", "ko", "sa", "si", "su", "se", "so", "ta", "chi", "tsu", "te", "to", "na", "ni", "nu", "ne", "no", "ha", "hi", "fu", "he", "ho", "ma", "mi", "mu", "me", "mo", "ya", "yu", "yo", "ra", "ri", "ru", "re", "ro", "wa", "wo", "n", "ga", "gi", "gu", "ge", "go", "za", "ji", "zu", "ze", "zo", "da", "ji", "zu", "de", "do", "ba"];
+        randomNumber = Math.floor(Math.random() * word.length);
+        randomWord = word[randomNumber];
+        randomPronunciation = pronunciation[randomNumber];
+        answer_word = randomWord;
+        answer_pronunciation = randomPronunciation;
+        document.getElementById("question").innerHTML = randomWord;
+        document.getElementById("pronunciation").innerHTML = randomPronunciation;
+        document.getElementById("word_status").innerHTML = word_status;
+    }
+
+    function consoleLog(){
+        console.group("#"+question_number)
+            console.log(randomNumber);
+            console.log(randomWord);
+            console.log(randomPronunciation);
+        console.groupEnd();
+    }
+    randomQuestion();
+    // consoleLog();
+
+    function addLog(){
+        if(resault == "&#x2716"){
+           document.getElementById("log").innerHTML += "<p class='wrong_'>"+word_status[0] + answer_word+': '+ answer_pronunciation+ ' ||- '+ input_answer +'-|: '+resault+"</p>"
+        }else{
+           document.getElementById("log").innerHTML += "<p class='correct_'>"+word_status[0] + answer_word+': '+ answer_pronunciation+ ' ||- '+ input_answer +'-|: '+resault+"</p>"
+        }
+    }
+
+    function showAnswer(){
+        document.getElementById("pronunciation").style.display = "block";
+    }
+    let audio_correct = new Audio('correct.wav')
+    let audio_wrong = new Audio('wrong.wav')
+    let audio_test = new Audio('cn_027.mp3')
+    
+    function answerAudio(i){
+        if(i == true){
+            audio_correct.currentTime = 0;
+            audio_correct.play();
+        }else{
+            audio_wrong.currentTime = 0;
+            audio_wrong.play();
+        }
+    }
+    function checkAnswer(){
+        input_answer = document.getElementById("input_answer").value;
+        if(input_answer.length > 3){
+            input_answer = "异常答案"; 
+            answerAudio(false)
+        }
+        else{
+            if(input_answer.length == 0){
+            input_answer = "未作答";
+            answerAudio(false)
+            };
+            if(input_answer == answer_pronunciation){
+            console.warn("correct");
+            resault = "&#x2714";//V
+            answerAudio(true)
+            }
+        else{
+            console.warn("wrong");
+            resault = "&#x2716";//X
+            answerAudio(false)
+            };
+        }
+        consoleLog();
+        addLog()
+        question_number += 1;
+
+    }
+    function next(){
+        document.getElementById("pronunciation").style.display = "none";
+        checkAnswer();
+        randomQuestion()
+    }
+
+    function change(){
+        if(word_status == "平假名"){
+            word_status = "片假名"
+            word = ["ア", "イ", "ウ", "エ", "オ", "カ", "キ", "ク", "ケ", "コ", "サ", "シ", "ス", "セ", "ソ", "タ", "チ", "ツ", "テ", "ト", "ナ", "ニ", "ヌ", "ネ", "ノ", "ハ", "ヒ", "フ", "ヘ", "ホ", "マ", "ミ", "ム", "メ", "モ", "ヤ", "ユ", "ヨ", "ラ", "リ", "ル", "レ", "ロ", "ワ", "ヲ", "ン", "ガ", "ギ", "グ", "ゲ", "ゴ", "ザ", "ジ", "ズ", "ゼ", "ゾ", "ダ", "ヂ", "ヅ", "デ", "ド", "バ", ]
+            document.getElementById("word_status").innerHTML = word_status;
+        }else{
+            word_status = "平假名"
+            word = ["あ", "い", "う", "え", "お", "か", "き", "く", "け", "こ", "さ", "し", "す", "せ", "そ", "た", "ち", "つ", "て", "と", "な", "に", "ぬ", "ね", "の", "は", "ひ", "ふ", "へ", "ほ", "ま", "み", "む", "め", "も", "や", "ゆ", "よ", "ら", "り", "る", "れ", "ろ", "わ", "を", "ん", "が", "ぎ", "ぐ", "げ", "ご", "ざ", "じ", "ず", "ぜ", "ぞ", "だ", "ぢ", "づ", "で", "ど", "ば", ];
+            document.getElementById("word_status").innerHTML = word_status;
+        }
+        randomQuestion()
+        document.getElementById("pronunciation").style.display = "none";
+    }
+    function showTable(){
+        if(document.getElementById("table").style.display == "none"){
+            document.getElementById("table").style.display = "block";
+        }else{
+            document.getElementById("table").style.display = "none";}
+    }
+
+
+    
+</script>
+</html>
